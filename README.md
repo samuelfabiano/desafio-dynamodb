@@ -41,7 +41,7 @@ aws dynamodb put-item \
     --item file://itemmusic.json \
 ```
 
-* Inserir 
+* Inserir múltiplos itens
 
 ```bash
 aws dynamodb batch-write-item \
@@ -103,6 +103,11 @@ aws dynamodb query \
     --expression-attribute-values  '{":artist":{"S":"Iron Maiden"}}'
 ```
 
+Resutlado:
+
+![image](https://user-images.githubusercontent.com/89883269/200225334-d0053aca-f08e-459b-8e4b-a85ee4322987.png)
+
+
 * Pesquisa pelo index secundário baseado no título do álbum
 
 ```bash
@@ -112,6 +117,11 @@ aws dynamodb query \
     --key-condition-expression "AlbumTitle = :name" \
     --expression-attribute-values  '{":name":{"S":"Fear of the Dark"}}'
 ```
+
+Resultado:
+
+![image](https://user-images.githubusercontent.com/89883269/200225572-099a27f6-e77c-486d-9bd0-0f7fd732baa2.png)
+
 
 * Pesquisa pelo index secundário baseado no nome do artista e no título do álbum
 
@@ -123,6 +133,11 @@ aws dynamodb query \
     --expression-attribute-values  '{":v_artist":{"S":"Iron Maiden"},":v_title":{"S":"Fear of the Dark"} }'
 ```
 
+Resultado:
+
+![image](https://user-images.githubusercontent.com/89883269/200225700-e8d45843-5e57-4846-853d-8ef1750078a8.png)
+
+
 * Pesquisa pelo index secundário baseado no título da música e no ano
 
 ```bash
@@ -132,3 +147,8 @@ aws dynamodb query \
     --key-condition-expression "SongTitle = :v_song and SongYear = :v_year" \
     --expression-attribute-values  '{":v_song":{"S":"Wasting Love"},":v_year":{"S":"1992"} }'
 ```
+
+Resultado: 
+
+![image](https://user-images.githubusercontent.com/89883269/200225807-1c848d2d-f0e1-4ca1-b107-2791ce82a312.png)
+

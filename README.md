@@ -14,7 +14,8 @@ Neste desafio foi utilizado o Amazon DynamoDB, que fornece um desempenho rápido
 "Falar é fácil, me mostre o código!" TORVALDS, Linus.
 
 * Criar uma tabela
-'''bash
+
+```bash
 aws dynamodb create-table \
     --table-name Music \
     --attribute-definitions \
@@ -25,41 +26,47 @@ aws dynamodb create-table \
         AttributeName=SongTitle,KeyType=RANGE \
     --provisioned-throughput \
         ReadCapacityUnits=10,WriteCapacityUnits=5
-'''
+```
 
 Resultado:
+
 ![image](https://user-images.githubusercontent.com/89883269/200224198-f202224b-95f6-4fed-ad9d-5eb739f25392.png)
 
 
 * Inserir um item
-'''bash
+
+```bash
 aws dynamodb put-item \
     --table-name Music \
     --item file://itemmusic.json \
-'''
+```
 
 * Inserir 
-'''bash
+
+```bash
 aws dynamodb batch-write-item \
     --request-items file://batchmusic.json
-'''
+```
 
 Resultado:
+
 ![image](https://user-images.githubusercontent.com/89883269/200224275-129456dd-ce8d-4904-9796-7df6430f0073.png)
 
 
 * Criar um index global secundário baeado no título do álbum
-'''bash
+
+```bash
 aws dynamodb update-table \
     --table-name Music \
     --attribute-definitions AttributeName=AlbumTitle,AttributeType=S \
     --global-secondary-index-updates \
         "[{\"Create\":{\"IndexName\": \"AlbumTitle-index\",\"KeySchema\":[{\"AttributeName\":\"AlbumTitle\",\"KeyType\":\"HASH\"}], \
         \"ProvisionedThroughput\": {\"ReadCapacityUnits\": 10, \"WriteCapacityUnits\": 5      },\"Projection\":{\"ProjectionType\":\"ALL\"}}}]"
-'''
+```
 
 * Criar um index global secundário baseado no nome do artista e no título do álbum
-'''bash
+
+```bash
 aws dynamodb update-table \
     --table-name Music \
     --attribute-definitions\
@@ -68,10 +75,11 @@ aws dynamodb update-table \
     --global-secondary-index-updates \
         "[{\"Create\":{\"IndexName\": \"ArtistAlbumTitle-index\",\"KeySchema\":[{\"AttributeName\":\"Artist\",\"KeyType\":\"HASH\"}, {\"AttributeName\":\"AlbumTitle\",\"KeyType\":\"RANGE\"}], \
         \"ProvisionedThroughput\": {\"ReadCapacityUnits\": 10, \"WriteCapacityUnits\": 5      },\"Projection\":{\"ProjectionType\":\"ALL\"}}}]"
-'''
+```
 
 * Criar um index global secundário baseado no título da música e no ano
-'''bash
+
+```bash
 aws dynamodb update-table \
     --table-name Music \
     --attribute-definitions\
@@ -80,42 +88,47 @@ aws dynamodb update-table \
     --global-secondary-index-updates \
         "[{\"Create\":{\"IndexName\": \"SongTitleYear-index\",\"KeySchema\":[{\"AttributeName\":\"SongTitle\",\"KeyType\":\"HASH\"}, {\"AttributeName\":\"SongYear\",\"KeyType\":\"RANGE\"}], \
         \"ProvisionedThroughput\": {\"ReadCapacityUnits\": 10, \"WriteCapacityUnits\": 5      },\"Projection\":{\"ProjectionType\":\"ALL\"}}}]"
-'''
+```
 
 Resulatdo:
+
 ![image](https://user-images.githubusercontent.com/89883269/200224493-9898d318-3b1f-4af0-b732-16e5c05bde2d.png)
 
 * Pesquisar item por artista
-'''bash
+
+```bash
 aws dynamodb query \
     --table-name Music \
     --key-condition-expression "Artist = :artist" \
     --expression-attribute-values  '{":artist":{"S":"Iron Maiden"}}'
-'''
+```
 
 * Pesquisa pelo index secundário baseado no título do álbum
-'''bash
+
+```bash
 aws dynamodb query \
     --table-name Music \
     --index-name AlbumTitle-index \
     --key-condition-expression "AlbumTitle = :name" \
     --expression-attribute-values  '{":name":{"S":"Fear of the Dark"}}'
-'''
+```
 
 * Pesquisa pelo index secundário baseado no nome do artista e no título do álbum
-'''bash
+
+```bash
 aws dynamodb query \
     --table-name Music \
     --index-name ArtistAlbumTitle-index \
     --key-condition-expression "Artist = :v_artist and AlbumTitle = :v_title" \
     --expression-attribute-values  '{":v_artist":{"S":"Iron Maiden"},":v_title":{"S":"Fear of the Dark"} }'
-'''
+```
 
 * Pesquisa pelo index secundário baseado no título da música e no ano
-'''bash
+
+```bash
 aws dynamodb query \
     --table-name Music \
     --index-name SongTitleYear-index \
     --key-condition-expression "SongTitle = :v_song and SongYear = :v_year" \
     --expression-attribute-values  '{":v_song":{"S":"Wasting Love"},":v_year":{"S":"1992"} }'
-'''
+```
